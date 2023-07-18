@@ -1,19 +1,17 @@
 // SPDX-License-Identifier: MIT
+pragma solidity 0.8.16;
 
-pragma solidity ^0.8.0;
-
-/**
- * @title Elliptic Curve Library
- *
- * @notice Since the npm version of the Elliptic Curve Library at [npm](Elliptic Curve Library) is outdated, all necessary files were included in the project from GitHub.
- * The code was taken from Witnet Foundation and their [Elliptic Curve Solidity Library](https://github.com/witnet/elliptic-curve-solidity)
- *
- * @dev Library providing arithmetic operations over elliptic curves.
- * This library does not check whether the inserted points belong to the curve
- * `isOnCurve` function should be used by the library user to check the aforementioned statement.
- *
- * @author Witnet Foundation
- */
+/// @title Elliptic Curve Library
+///
+/// @notice Since the npm version of the Elliptic Curve Library at [npm](Elliptic Curve Library) is outdated,
+/// all necessary files were included in the project from GitHub.
+/// The code was taken from Witnet Foundation from [Elliptic Curve Solidity Library](https://github.com/witnet/elliptic-curve-solidity) repository.
+///
+/// @dev Library providing arithmetic operations over elliptic curves.
+/// This library does not check whether the inserted points belong to the curve
+/// `isOnCurve` function should be used by the library user to check the aforementioned statement.
+///
+/// @author Witnet Foundation
 library EllipticCurve {
     // Pre-computed constant for 2 ** 255
     uint256 private constant U255_MAX_PLUS_1 =

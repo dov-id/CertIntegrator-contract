@@ -3,8 +3,8 @@ pragma solidity 0.8.16;
 
 interface ICertIntegrator {
     /**
-     * Structure to store contract data:
-     * merkle tree root and corresponding block number
+     *  A structure to store course data:
+     *  Merkle tree root and corresponding block number
      */
     struct Data {
         uint256 blockNumber;
@@ -12,42 +12,40 @@ interface ICertIntegrator {
     }
 
     /**
-     * @dev Updates the contract information abouts course states.
+     *  @notice Updates course state information.
      *
-     * This function takes two equal size arrays that contains courses
-     * addresses and merkle tree roots (to identify whether the user in course).
-     * Each root in the list corresponds to the course with such name.
+     *  This function takes two identically sized arrays containing course addresses and the roots
+     *  of the Merkle tree (to identify whether the user is on a course)
      *
-     * @param courses_ array with course address
-     * @param states_ array with course states
+     *  @param courses_ array with course addresses
+     *  @param states_ an array with the states of the courses
      *
-     * Requirements:
-     *
-     * - the `courses_` and `states_` arrays length must be equal.
+     *  Requirements:
+     *   - the length of the `courses_` and `states_` arrays must be the same.
      */
     function updateCourseState(address[] memory courses_, bytes32[] memory states_) external;
 
     /**
-     * @dev Retrieves info by course address.
+     *  @notice Gets information about a course by its address.
      *
-     * @param course_ course address to retrieve info
-     * @return Data[] with all states for course
+     *  @param course_ course address to get the information
+     *  @return Array of states for the course
      */
     function getData(address course_) external view returns (Data[] memory);
 
     /**
-     * @dev Retrieves last info by course address.
+     *  @dev Gets information about the last state of a course by its address.
      *
-     * @param course_ course address to retrieve info
-     * @return Data with last state for course
+     *  @param course_ course address to get the information
+     *  @return Last state of course
      */
     function getLastData(address course_) external view returns (Data memory);
 
     /**
-     * @dev Retrieves info length by course address.
+     *  @dev Gets the number of states for a course by its address
      *
-     * @param course_ course address to retrieve info length
-     * @return uint256 amount of Data[] elements
+     *  @param course_ course address
+     *  @return number of course states
      */
     function getDataLength(address course_) external view returns (uint256);
 }
