@@ -1,15 +1,15 @@
-import { Deployer, Logger } from "@dlsl/hardhat-migrate";
 import { artifacts } from "hardhat";
+
+import { Deployer, Logger } from "@dlsl/hardhat-migrate";
+
 import { getPoseidons } from "@/test/helpers/poseidons";
 
+const Verifier = artifacts.require("Verifier");
 const CertIntegrator = artifacts.require("CertIntegrator");
 const FeedbackRegistry = artifacts.require("FeedbackRegistry");
-const Verifier = artifacts.require("Verifier");
 
 const PoseidonUnit2L = artifacts.require("PoseidonUnit2L");
 const PoseidonUnit3L = artifacts.require("PoseidonUnit3L");
-
-require("dotenv").config();
 
 export = async (deployer: Deployer, logger: Logger) => {
   const { poseidonHasher2, poseidonHasher3 } = await getPoseidons();
