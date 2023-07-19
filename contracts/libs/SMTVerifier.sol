@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity 0.8.16;
 
-import "@iden3/contracts/lib/Poseidon.sol";
+import {PoseidonUnit2L, PoseidonUnit3L} from "@iden3/contracts/lib/Poseidon.sol";
 
 /**
- *  1. This library is needed for verifying sparse merkle tree proof, that are generated with
- *  help of [Sparse Merkle Tree](https://github.com/iden3/go-merkletree-sql) in backend service,
- *  written in Golang (to generate proof just use `GenerateProof` method from the library).
+ *  1. This library is needed for verifying sparse Merkle Tree proof, that is generated with
+ *   help of [Sparse Merkle Tree](https://github.com/iden3/go-merkletree-sql) in backend service,
+ *   written in Golang (to generate proof just use `GenerateProof` method from the library).
  *
- *  2. This realization had some uses Poseidon hashing as a main hash function. The main repo for usage
- *  can be found in [circomlibjs](https://github.com/iden3/circomlibjs). Example of its usage and
- *  linking can be found in tests for this library.
+ *  2. This realization uses Poseidon hashing as a main hash function. The main repo for usage
+ *   can be found in [circomlibjs](https://github.com/iden3/circomlibjs). Example of its usage and
+ *   linking can be found in tests for this library.
  *
  *  3. Gas usage for main `verifyProof` method is:
  *      a. Min: 252226
@@ -18,7 +18,7 @@ import "@iden3/contracts/lib/Poseidon.sol";
  *      c. Max: 252610
  *
  *  4. With this library there is no need to implement own realization for proof verifying in iden3 sparse
- *  merkle tree realization.
+ *   Merkle Tree realization.
  */
 library SMTVerifier {
     function verifyProof(
@@ -31,31 +31,31 @@ library SMTVerifier {
     }
 
     /**
-     *  @dev Verifies root from proof.
+     *  @notice Verifies root from proof.
      *
-     *  1. Function takes some params and requires merkle tree proof
-     *  array not to be empty to have ability to retrieve root from it.
+     *  1. Function takes some params and requires Merkle Tree proof
+     *   array not to be empty to have ability to retrieve root from it.
      *
      *  2. Then, it generates tree leaf from `key_`, `value_` and `1` (level in tree)
-     *  with help of poseidon hashing for 3 elements (`poseidon3Hash_`).
+     *   with help of Poseidon hashing for 3 elements (`poseidon3Hash_`).
      *
      *  3. On the next step it starts processing proof elements (starting from
-     *  the last element (`proof_.length - 1`)) until all are processed. At every
-     *  iteration it checks if the bit is set (not zero) to get kind of a path
-     *  from the root to the leaf.
+     *   the last element (`proof_.length - 1`)) until all are processed. At every
+     *   iteration it checks if the bit is set (not zero) to get some  kind of a path
+     *   from the root to the leaf.
      *
      *  4. When all elements are processed, retrieved node compared with given root
-     *  to get response.
+     *   to get response.
      *
-     *  @param root_ merkle tree root to verify with
+     *  @param root_ Merkle Tree root to verify
      *  @param key_ the key to verify in SMT
      *  @param value_ the value to verify in SMT
-     *  @param proof_ sparse merkle tree proof
-     *  @return true when retrieved SMT root from proof is equal to the given `root_`
+     *  @param proof_ Sparse Merkle Tree proof
+     *  @return true when retrieved SMT root from proof is equal to the given `root_`,
+     *  otherwise - false
      *
      *  Requirements:
-     *
-     * - the `proof_` array mustn't be empty.
+     *   - the `proof_` array mustn't be empty.
      */
     function _verifyProof(
         bytes32 root_,
@@ -65,7 +65,7 @@ library SMTVerifier {
     ) private pure returns (bool) {
         uint256 proofLength_ = proof_.length;
 
-        require(proofLength_ > 0, "SMTVerifier: sparse merkle tree proof is empty");
+        require(proofLength_ > 0, "SMTVerifier: sparse Merkle Tree proof is empty");
 
         uint256 midKey_ = _swapEndianness(
             _newPoseidonHash3(
@@ -102,9 +102,9 @@ library SMTVerifier {
     }
 
     /**
-     *  @dev Swaps bytes order (endianness).
+     *  @notice Swaps bytes order (endianness).
      *
-     *  @notice Function to swap bytes order, for better
+     *  @dev Function to swap bytes order, for better
      *  understanding it just makes `result[len(data)-1-i] = data[i]`
      *  for every byte in bytes array.
      *
@@ -122,9 +122,9 @@ library SMTVerifier {
     }
 
     /**
-     *  @dev Tests bit.
+     *  @notice Tests bit.
      *
-     *  @notice This function tests bit value. It takes the byte
+     *  @dev This function tests bit value. It takes the byte
      *  at the specified index, then shifts the bit to the right
      *  position and perform bitwise AND, then checks if the bit
      *  is set (not zero)
@@ -145,27 +145,23 @@ library SMTVerifier {
     }
 
     /**
-     *  @dev Makes poseidon hash.
-     *
-     *  @notice This function creates poseidon hash from 2 elements.
+     *  @notice Makes Poseidon hash from 2 elements.
      *
      *  @param elem1_ the first element
      *  @param elem2_ the second element
-     *  @return bytes32 poseidon hash from elements
+     *  @return bytes32 Poseidon hash from elements
      */
     function _newPoseidonHash2(uint256 elem1_, uint256 elem2_) private pure returns (uint256) {
         return PoseidonUnit2L.poseidon([elem1_, elem2_]);
     }
 
     /**
-     *  @dev Makes poseidon hash.
-     *
-     *  @notice This function creates poseidon hash from 3 elements.
+     *  @notice Makes Poseidon hash from 3 elements.
      *
      *  @param elem1_ the first element
      *  @param elem2_ the second element
-     *  @param elem3_ the second element
-     *  @return bytes32 poseidon hash from elements
+     *  @param elem3_ the third element
+     *  @return bytes32 Poseidon hash from elements
      */
     function _newPoseidonHash3(
         uint256 elem1_,

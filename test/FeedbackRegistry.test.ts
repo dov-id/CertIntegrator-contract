@@ -158,7 +158,7 @@ describe("FeedbackRegistry", async () => {
       expect(await feedbackRegistry.contractFeedbacks(COURSE, 1)).to.equal(ipfs);
     });
 
-    it("should revert merkle tree verification", async () => {
+    it("should revert Merkle Tree verification", async () => {
       let proof = [
         [
           "0x0000000000000000000000000000000000000000000000000000000000000000",
@@ -168,13 +168,13 @@ describe("FeedbackRegistry", async () => {
 
       await expect(
         feedbackRegistry.addFeedback(COURSE, I, C, R, PUBLIC_KEYS_X, PUBLIC_KEYS_Y, proof, KEYS, VALUES, IPFS)
-      ).to.be.revertedWith("FeedbackRegistry: wrong merkle tree verification");
+      ).to.be.revertedWith("FeedbackRegistry: wrong Merkle Tree verification");
     });
 
-    it("should revert empty merkle tree verification", async () => {
+    it("should revert empty Merkle Tree verification", async () => {
       await expect(
         feedbackRegistry.addFeedback(COURSE, I, C, R, PUBLIC_KEYS_X, PUBLIC_KEYS_Y, [[]], KEYS, VALUES, IPFS)
-      ).to.be.revertedWith("SMTVerifier: sparse merkle tree proof is empty");
+      ).to.be.revertedWith("SMTVerifier: sparse Merkle Tree proof is empty");
     });
 
     it("should revert wrong signature", async () => {

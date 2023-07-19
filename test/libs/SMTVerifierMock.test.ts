@@ -61,7 +61,7 @@ describe("SMTVerifierMock", async () => {
 
     it("should revert empty merklee tree proof", async () => {
       await expect(smtVerifierMock.verify(ROOT, KEY, VAL, [])).to.be.revertedWith(
-        "SMTVerifier: sparse merkle tree proof is empty"
+        "SMTVerifier: sparse Merkle Tree proof is empty"
       );
     });
   });

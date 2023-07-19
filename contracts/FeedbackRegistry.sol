@@ -1,39 +1,36 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity 0.8.16;
 
-import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-import "@dlsl/dev-modules/libs/arrays/Paginator.sol";
+import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import {Paginator} from "@dlsl/dev-modules/libs/arrays/Paginator.sol";
 
-import "./interfaces/IFeedbackRegistry.sol";
-import "./interfaces/ICertIntegrator.sol";
-import "./libs/SMTVerifier.sol";
-import "./libs/RingSignature.sol";
+import {IFeedbackRegistry} from "./interfaces/IFeedbackRegistry.sol";
+import {ICertIntegrator} from "./interfaces/ICertIntegrator.sol";
+import {SMTVerifier} from "./libs/SMTVerifier.sol";
+import {RingSignature} from "./libs/RingSignature.sol";
 
 /**
  *  @notice The Feedback registry contract
  *
  *  1. The FeedbackRegistry contract is the main contract in the Dov-Id system. It will provide the logic
- *  for adding and storing the course participants’ feedbacks, where the feedback is an IPFS hash that
- *  routes us to the user’s feedback payload on IPFS. Also, it is responsible for validating the ZKP
- *  of NFT owning.
+ *   for adding and storing the course participants’ feedbacks, where the feedback is an IPFS hash that
+ *   routes us to the user’s feedback payload on IPFS. Also, it is responsible for validating the ZKP
+ *   of NFT owning.
  *
  *  2. The course identifier - is its adddress as every course is represented by NFT contract.
  *
  *  3. Requirements:
- *
- *  - The contract must receive information about the courses and their participants from the
- *    CertIntegrator contract.
- *
- *  - The ability to add feedback by a user for a specific course with a provided ZKP of NFT owning.
- *    The proof must be validated.
- *
- *  - The ability to retrieve feedbacks with a pagination.
+ *   - The contract must receive information about the courses and their participants from the
+ *     CertIntegrator contract.
+ *   - The ability to add feedback by a user for a specific course with a provided ZKP of NFT owning.
+ *     The proof must be validated.
+ *   - The ability to retrieve feedbacks with a pagination.
  *
  *  4. Note:
- *     Dev team faced with a zkSnark proof generation problems, so now
- *  contract checks that the addressesMTP root is stored in the CertIntegrator contract and that all
- *  MTPs are correct. The contract checks the ring signature as well, and if it is correct the
- *  contract adds feedback to storage.
+ *   Dev team faced with a zkSnark proof generation problems, so now contract checks that the
+ *   addressesMTP root is stored in the CertIntegrator contract and that all MTPs are correct.
+ *   The contract checks the ring signature as well, and if it is correct the contract adds feedback
+ *   to storage.
  */
 contract FeedbackRegistry is IFeedbackRegistry {
     using EnumerableSet for EnumerableSet.AddressSet;
@@ -53,7 +50,7 @@ contract FeedbackRegistry is IFeedbackRegistry {
     }
 
     /**
-     * @inheritdoc IFeedbackRegistry
+     *  @inheritdoc IFeedbackRegistry
      */
     function addFeedback(
         address course_,
@@ -79,7 +76,7 @@ contract FeedbackRegistry is IFeedbackRegistry {
         for (uint k = 0; k < merkleTreeProofs_.length; k++) {
             require(
                 courseData_.root.verifyProof(keys_[k], values_[k], merkleTreeProofs_[k]) == true,
-                "FeedbackRegistry: wrong merkle tree verification"
+                "FeedbackRegistry: wrong Merkle Tree verification"
             );
         }
 
@@ -88,7 +85,7 @@ contract FeedbackRegistry is IFeedbackRegistry {
     }
 
     /**
-     * @inheritdoc IFeedbackRegistry
+     *  @inheritdoc IFeedbackRegistry
      */
     function getFeedbacks(
         address course_,
@@ -107,7 +104,7 @@ contract FeedbackRegistry is IFeedbackRegistry {
     }
 
     /**
-     * @inheritdoc IFeedbackRegistry
+     *  @inheritdoc IFeedbackRegistry
      */
     function getAllFeedbacks(
         uint256 offset_,
@@ -127,10 +124,10 @@ contract FeedbackRegistry is IFeedbackRegistry {
     /**
      *  @dev Verifies Ring Signature.
      *
-     *  @param message_ signature message
-     *  @param i_ signature key image
-     *  @param c_ signature scalar C
-     *  @param r_ scalars scalar R
+     *  @param message_ Ring signature message
+     *  @param i_ Ring signature key image
+     *  @param c_ Ring signature scalar C
+     *  @param r_ Ring scalars scalar R
      *  @param publicKeysX_ x coordinates of public keys for signature verification
      *  @param publicKeysY_ y coordinates of public keys for signature verification
      *  @return true if the signature is valid

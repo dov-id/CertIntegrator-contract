@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity 0.8.16;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import {ERC721EnumerableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 
-import "../interfaces/ITokenFactory.sol";
-import "../interfaces/ITokenContract.sol";
+import {ITokenFactory} from "../interfaces/ITokenFactory.sol";
+import {ITokenContract} from "../interfaces/ITokenContract.sol";
 
 contract TokenContract is ITokenContract, ERC721EnumerableUpgradeable {
     ITokenFactory public override tokenFactory;

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.0;
+pragma solidity 0.8.16;
 
-import "@openzeppelin/contracts/utils/Strings.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
-import "../elliptic-curve-solidity/contracts/EllipticCurve.sol";
+import {EllipticCurve} from "../elliptic-curve-solidity/contracts/EllipticCurve.sol";
 
 /**
  *  1. This library is needed for operating with ring signature in Secp256k1 elliptic curve.

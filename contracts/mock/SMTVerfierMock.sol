@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity 0.8.16;
 
-import "../libs/SMTVerifier.sol";
+import {SMTVerifier} from "../libs/SMTVerifier.sol";
 
 contract SMTVerifierMock {
     using SMTVerifier for bytes32;

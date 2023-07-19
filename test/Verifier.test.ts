@@ -205,7 +205,7 @@ describe("Verifier", async () => {
       expect(parseInt(tx.events[0].topics[3], 16)).to.equal(0);
     });
 
-    it("should revert merkle tree verification", async () => {
+    it("should revert Merkle Tree verification", async () => {
       let proof = [
         [
           "0x0000000000000000000000000000000000000000000000000000000000000000",
@@ -215,7 +215,7 @@ describe("Verifier", async () => {
 
       await expect(
         verifier.verifyContract(CONTRACT, I, C, R, PUBLIC_KEYS_X, PUBLIC_KEYS_Y, proof, KEYS, VALUES, URI)
-      ).to.be.revertedWith("Verifier: wrong merkle tree verification");
+      ).to.be.revertedWith("Verifier: wrong Merkle Tree verification");
     });
 
     it("should revert wrong signature", async () => {

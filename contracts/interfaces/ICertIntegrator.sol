@@ -4,7 +4,7 @@ pragma solidity 0.8.16;
 interface ICertIntegrator {
     /**
      *  A structure to store course data:
-     *  Merkle tree root and corresponding block number
+     *  Merkle Tree root and corresponding block number
      */
     struct Data {
         uint256 blockNumber;
@@ -15,7 +15,7 @@ interface ICertIntegrator {
      *  @notice Updates course state information.
      *
      *  This function takes two identically sized arrays containing course addresses and the roots
-     *  of the Merkle tree (to identify whether the user is on a course)
+     *  of the Merkle Tree (to identify whether the user is on a course)
      *
      *  @param courses_ array with course addresses
      *  @param states_ an array with the states of the courses

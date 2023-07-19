@@ -1,31 +1,31 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity 0.8.16;
 
-import "./interfaces/IVerifier.sol";
-import "./libs/SMTVerifier.sol";
-import "./libs/RingSignature.sol";
+import {IVerifier} from "./interfaces/IVerifier.sol";
+import {SMTVerifier} from "./libs/SMTVerifier.sol";
+import {RingSignature} from "./libs/RingSignature.sol";
 
 /**
  *  @notice The Verifier contract
  *
  *  1. When we have some token in main chain, but at the same time interact with another chains,
- *  sometimes there is a need to operate data directly from one of these chains.
+ *   sometimes there is a need to operate data directly from one of these chains.
  *
  *  2. This contract solves such problem, by verifying that user definitely owns such token in
- *  main chain and minting token with the same uri.
+ *   main chain and minting token with the same uri.
  *
  *  3. Verification takes part according to such flow:
- *      a. Our contract verifies signature
- *      b. It makes call to integrator contract in order to get last root with block that was
- *         published there. Then using sparse merkle tree proof, key and value verifies proof
- *         with help of SMTVerifier lib
- *      c. If everything was processed without errors verifier contract will make a call to
- *         the contract address to mint new token in side-chain.
+ *   a. Our contract verifies signature
+ *   b. It makes call to integrator contract in order to get last root with block that was
+ *      published there. Then using sparse Merkle Tree proof, key and value verifies proof
+ *      with help of SMTVerifier lib
+ *   c. If everything was processed without errors verifier contract will make a call to
+ *      the contract address to mint new token in side-chain.
  *
  *  4. Note:
- *      a. As signature now we process ring signature
- *      b. As merkle tree proof contract waits Sparse Merkle Tree Proof. During testing was used
- *         proofs from such [realization](https://github.com/iden3/go-merkletree-sql)
+ *   a. As signature now we process ring signature
+ *   b. As Merkle Tree proof contract waits Sparse Merkle Tree Proof. During testing was used
+ *      proofs from such [realization](https://github.com/iden3/go-merkletree-sql)
  */
 contract Verifier is IVerifier {
     using RingSignature for bytes;
@@ -38,7 +38,7 @@ contract Verifier is IVerifier {
     }
 
     /**
-     * @inheritdoc IVerifier
+     *  @inheritdoc IVerifier
      */
     function verifyContract(
         address contract_,
@@ -68,7 +68,7 @@ contract Verifier is IVerifier {
         for (uint k = 0; k < merkleTreeProofs_.length; k++) {
             require(
                 courseData_.root.verifyProof(keys_[k], values_[k], merkleTreeProofs_[k]) == true,
-                "Verifier: wrong merkle tree verification"
+                "Verifier: wrong Merkle Tree verification"
             );
         }
 
@@ -85,9 +85,9 @@ contract Verifier is IVerifier {
      *  @dev Verifies Ring Signature.
      *
      *  @param message_ signature message
-     *  @param i_ signature key image
-     *  @param c_ signature scalar C
-     *  @param r_ scalars scalar R
+     *  @param i_ Ring signature key image
+     *  @param c_ Ring signature scalar C
+     *  @param r_ Ring signature scalar R
      *  @param publicKeysX_ x coordinates of public keys for signature verification
      *  @param publicKeysY_ y coordinates of public keys for signature verification
      *  @return true if the signature is valid
