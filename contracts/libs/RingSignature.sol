@@ -6,28 +6,28 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {EllipticCurve} from "../elliptic-curve-solidity/contracts/EllipticCurve.sol";
 
 /**
- *  1. This library is needed for operating with ring signature in Secp256k1 elliptic curve.
- *  Signature specification can be found in [web archive](https://web.archive.org/web/20160514065822/https://cryptonote.org/cns/cns002.txt).
+ * 1. This library is needed for operating with ring signature in Secp256k1 elliptic curve.
+ *    Signature specification can be found in [web archive](https://web.archive.org/web/20160514065822/https://cryptonote.org/cns/cns002.txt).
  *
- *  2. Pseudo code for verifying such signature looks like:
- *   Procedure verify_signature(M, A[1], A[2], ..., A[n], I, c[1], r[1],
- *       c[2], r[2], ..., c[n], r[n]):
- *       For i <- 1..n
- *           X[i] <- c[i]*A[i]+r[i]*G
- *           Y[i] <- c[i]*I+r[i]*H(A[i])
- *       End For
- *       If H(H(M) || X[1] || Y[1] || X[2] || Y[2] || ... || X[n] || Y[n])
- *       = Sum[i=1..n](c[i])
- *           Return "Correct"
- *       Else
- *           Return "Incorrect"
- *       End If
- *   End Procedure
+ * 2. Pseudo code for verifying such signature looks like:
  *
- *  3. Gas usage for `verify` method is:
- *      a. Min: 7040807
- *      b. Avg: 12077960
- *      c. Max: 23877055
+ *    Procedure verify_signature(M, A[1], A[2], ..., A[n], I, c[1], r[1], c[2], r[2], ..., c[n], r[n]):
+ *          For i <- 1..n
+ *              X[i] <- c[i]*A[i]+r[i]*G
+ *              Y[i] <- c[i]*I+r[i]*H(A[i])
+ *          End For
+ *
+ *          If H(H(M) || X[1] || Y[1] || X[2] || Y[2] || ... || X[n] || Y[n]) = Sum[i=1..n](c[i])
+ *              Return "Correct"
+ *          Else
+ *              Return "Incorrect"
+ *          End If
+ *    End Procedure
+ *
+ * 3. Gas usage for `verify` method is:
+ *     a. Min: 7040807
+ *     b. Avg: 12077960
+ *     c. Max: 23877055
  */
 library RingSignature {
     struct Coordinate {
@@ -35,7 +35,7 @@ library RingSignature {
         uint256 y;
     }
 
-    //init values for Secp256k1 elliptic curve
+    // init values for Secp256k1 elliptic curve
     uint256 public constant NN =
         0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141;
     uint256 public constant GX =
@@ -72,7 +72,7 @@ library RingSignature {
         Coordinate[] memory X_ = new Coordinate[](length_);
         uint256[] memory Y_ = new uint256[](length_);
 
-        //For i <- 1..n
+        // For i <- 1..n
         for (uint256 k = 0; k < length_; k++) {
             // X[i] <- c[i]*A[i]+r[i]*G
             Coordinate memory a;
@@ -82,11 +82,11 @@ library RingSignature {
 
             (X_[k].x, X_[k].y) = EllipticCurve.ecAdd(a.x, a.y, b.x, b.y, AA, PP);
 
-            //  Y[i] <- c[i]*I+r[i]*H(A[i])
+            // Y[i] <- c[i]*I+r[i]*H(A[i])
             uint256 hashA_ = uint256(sha256(abi.encodePacked(publicKeysX_[k], publicKeysY_[k])));
             Y_[k] = addmod(mulmod(c_[k], i_, NN), mulmod(r_[k], hashA_, NN), NN);
         }
-        //End For
+        // End For
 
         // H(H(M) || X[1] || Y[1] || X[2] || Y[2] || ... || X[n] || Y[n])
         bytes memory concatenated_ = abi.encodePacked(uint256(sha256(message_)));

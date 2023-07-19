@@ -6,36 +6,36 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ICertIntegrator} from "./interfaces/ICertIntegrator.sol";
 
 /**
- *  @notice The Cert integrator contract
+ * @notice The Cert integrator contract
  *
- *  1. While the FeedbackRegistry contracts will be deployed on multiple chains, another contracts
- *   will only be present on its main chain. This contract is a Solidity contract that solves
- *   the previous problem.
+ * 1. While the FeedbackRegistry contracts will be deployed on multiple chains, another contracts
+ *    will only be present on its main chain. This contract is a Solidity contract that solves
+ *    the previous problem.
  *
- *  2. This contract will be deployed on the supported chains, and its purpose is to store and
- *   provide the ability to update data about courses and their participants from the chains.
+ * 2. This contract will be deployed on the supported chains, and its purpose is to store and
+ *    provide the ability to update data about courses and their participants from the chains.
  *
- *  3.This data is the root of the Sparse Merkle Tree that contains course participants. Whenever
- *   a certificate is issued or a new course is created, the CertIntegration service will
- *   update the data. This way, every instance of FeedbackRegistry on different chains will have
- *   the latest and most up-to-date data available.
+ * 3. This data is the root of the Sparse Merkle Tree that contains course participants. Whenever
+ *    a certificate is issued or a new course is created, the CertIntegration service will
+ *    update the data. This way, every instance of FeedbackRegistry on different chains will have
+ *    the latest and most up-to-date data available.
  *
- *  4. The course identifier - is its adddress as every course is represented by NFT contract.
+ * 4. The course identifier - is its address as every course is represented by NFT contract.
  *
- *  5. Requirements:
- *   - The ability to update the state for a specific course. It is only for a contract owner.
- *   - The contract must store all roots, to avoid collision when the user generates a ZKP for
- *     a specific merkle root, but after several seconds this root is replaced by the CertIntegrator
- *     service. Also, the contract should bind up every state to the block number. It will provide
- *     an ability for external services to set some interval of blocks in which they will consider
- *     this state valid.
+ * 5. Requirements:
+ *    - The ability to update the state for a specific course. It is only for a contract owner.
+ *    - The contract must store all roots, to avoid collision when the user generates a ZKP for
+ *      a specific merkle root, but after several seconds this root is replaced by the CertIntegrator
+ *      service. Also, the contract should bind up every state to the block number. It will provide
+ *      an ability for external services to set some interval of blocks in which they will consider
+ *      this state valid.
  */
 contract CertIntegrator is Ownable, ICertIntegrator {
     // course address => data (root+block)
     mapping(address => Data[]) public contractData;
 
     /**
-     *  @inheritdoc ICertIntegrator
+     * @inheritdoc ICertIntegrator
      */
     function updateCourseState(
         address[] memory courses_,
@@ -55,14 +55,14 @@ contract CertIntegrator is Ownable, ICertIntegrator {
     }
 
     /**
-     *  @inheritdoc ICertIntegrator
+     * @inheritdoc ICertIntegrator
      */
     function getData(address course_) external view returns (Data[] memory) {
         return contractData[course_];
     }
 
     /**
-     *  @inheritdoc ICertIntegrator
+     * @inheritdoc ICertIntegrator
      */
     function getLastData(address course_) external view returns (Data memory) {
         uint256 length_ = contractData[course_].length;
@@ -73,7 +73,7 @@ contract CertIntegrator is Ownable, ICertIntegrator {
     }
 
     /**
-     *  @inheritdoc ICertIntegrator
+     * @inheritdoc ICertIntegrator
      */
     function getDataLength(address course_) external view returns (uint256) {
         return contractData[course_].length;

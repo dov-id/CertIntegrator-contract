@@ -10,27 +10,27 @@ import {SMTVerifier} from "./libs/SMTVerifier.sol";
 import {RingSignature} from "./libs/RingSignature.sol";
 
 /**
- *  @notice The Feedback registry contract
+ * @notice The Feedback registry contract
  *
- *  1. The FeedbackRegistry contract is the main contract in the Dov-Id system. It will provide the logic
- *   for adding and storing the course participants’ feedbacks, where the feedback is an IPFS hash that
- *   routes us to the user’s feedback payload on IPFS. Also, it is responsible for validating the ZKP
- *   of NFT owning.
+ * 1. The FeedbackRegistry contract is the main contract in the Dov-Id system. It will provide the logic
+ *    for adding and storing the course participants’ feedbacks, where the feedback is an IPFS hash that
+ *    routes us to the user’s feedback payload on IPFS. Also, it is responsible for validating the ZKP
+ *    of NFT owning.
  *
- *  2. The course identifier - is its adddress as every course is represented by NFT contract.
+ * 2. The course identifier - is its address as every course is represented by NFT contract.
  *
- *  3. Requirements:
- *   - The contract must receive information about the courses and their participants from the
- *     CertIntegrator contract.
- *   - The ability to add feedback by a user for a specific course with a provided ZKP of NFT owning.
- *     The proof must be validated.
- *   - The ability to retrieve feedbacks with a pagination.
+ * 3. Requirements:
+ *    - The contract must receive information about the courses and their participants from the
+ *      CertIntegrator contract.
+ *    - The ability to add feedback by a user for a specific course with a provided ZKP of NFT owning.
+ *      The proof must be validated.
+ *    - The ability to retrieve feedbacks with a pagination.
  *
- *  4. Note:
- *   Dev team faced with a zkSnark proof generation problems, so now contract checks that the
- *   addressesMTP root is stored in the CertIntegrator contract and that all MTPs are correct.
- *   The contract checks the ring signature as well, and if it is correct the contract adds feedback
- *   to storage.
+ * 4. Note:
+ *    Dev team faced with a zkSnark proof generation problems, so now contract checks that the
+ *    addressesMTP root is stored in the CertIntegrator contract and that all MTPs are correct.
+ *    The contract checks the ring signature as well, and if it is correct the contract adds feedback
+ *    to storage.
  */
 contract FeedbackRegistry is IFeedbackRegistry {
     using EnumerableSet for EnumerableSet.AddressSet;
@@ -50,7 +50,7 @@ contract FeedbackRegistry is IFeedbackRegistry {
     }
 
     /**
-     *  @inheritdoc IFeedbackRegistry
+     * @inheritdoc IFeedbackRegistry
      */
     function addFeedback(
         address course_,
@@ -80,12 +80,12 @@ contract FeedbackRegistry is IFeedbackRegistry {
             );
         }
 
-        contractFeedbacks[course_].push(ipfsHash_);
         _courses.add(course_);
+        contractFeedbacks[course_].push(ipfsHash_);
     }
 
     /**
-     *  @inheritdoc IFeedbackRegistry
+     * @inheritdoc IFeedbackRegistry
      */
     function getFeedbacks(
         address course_,
@@ -104,7 +104,7 @@ contract FeedbackRegistry is IFeedbackRegistry {
     }
 
     /**
-     *  @inheritdoc IFeedbackRegistry
+     * @inheritdoc IFeedbackRegistry
      */
     function getAllFeedbacks(
         uint256 offset_,
