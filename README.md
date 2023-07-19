@@ -6,7 +6,8 @@ The **Dov-Id** platform aims to ensure the authenticity of user feedback by prev
 
 ## DOV-ID Simplified architecture
 
-![dovid-contracts](https://github.com/dov-id/core-contracts/assets/108219165/255fa86d-066e-40e6-b06c-e4f6005bbbe6)
+![dovid-contracts-white](https://github.com/dov-id/core-contracts/assets/108219165/414f7e6b-8644-4e02-a1d4-80b59804bc75)
+
 
 ## Description
 
