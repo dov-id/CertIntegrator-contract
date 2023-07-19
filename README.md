@@ -6,11 +6,11 @@ The **Dov-Id** platform aims to ensure the authenticity of user feedback by prev
 
 ## DOV-ID Simplified architecture
 
-INSERT IMAGE HERE
+![dovid-contracts](https://github.com/dov-id/core-contracts/assets/108219165/255fa86d-066e-40e6-b06c-e4f6005bbbe6)
 
 ## Description
 
-The **Dov-Id** has two main contracts that are responsible for logic: *Certificates Integrator* and *Feedback Registry* contracts. 
+The **Dov-Id** has two main contracts that are responsible for logic: *Certificates Integrator* and *Feedback Registry* contracts. And this solution will be applied to the **Distributed Lab Education Certificates**.
 
 ### Certificates Integrator
 The **CertIntegrator** contract is a *Solidity* contract that solves the problem, when *Fabric* and *Issuer* contracts presented only on their main chain, but **FeedbackRegistry** will be on several chains at the same time (*Q*, *Polygon*, *Ethereum*, etc.) and will not have access to information about courses and their participants. 
