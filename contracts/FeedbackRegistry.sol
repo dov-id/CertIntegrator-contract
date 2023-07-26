@@ -65,7 +65,7 @@ contract FeedbackRegistry is IFeedbackRegistry {
         string memory ipfsHash_
     ) external {
         require(
-            _verifySignature(bytes(ipfsHash_), i_, c_, r_, publicKeysX_, publicKeysY_) == true,
+            bytes(ipfsHash_).verify(i_, c_, r_, publicKeysX_, publicKeysY_) == true,
             "FeedbackRegistry: wrong signature"
         );
 
@@ -91,10 +91,10 @@ contract FeedbackRegistry is IFeedbackRegistry {
         address course_,
         uint256 offset_,
         uint256 limit_
-    ) external view returns (string[] memory) {
+    ) external view returns (string[] memory list_) {
         uint256 to_ = Paginator.getTo(contractFeedbacks[course_].length, offset_, limit_);
 
-        string[] memory list_ = new string[](to_ - offset_);
+        list_ = new string[](to_ - offset_);
 
         for (uint256 i = offset_; i < to_; i++) {
             list_[i - offset_] = contractFeedbacks[course_][i];
@@ -119,27 +119,5 @@ contract FeedbackRegistry is IFeedbackRegistry {
         for (uint256 i = 0; i < coursesLength_; i++) {
             feedbacks_[i] = contractFeedbacks[courses_[i]];
         }
-    }
-
-    /**
-     *  @dev Verifies Ring Signature.
-     *
-     *  @param message_ Ring signature message
-     *  @param i_ Ring signature key image
-     *  @param c_ Ring signature scalar C
-     *  @param r_ Ring scalars scalar R
-     *  @param publicKeysX_ x coordinates of public keys for signature verification
-     *  @param publicKeysY_ y coordinates of public keys for signature verification
-     *  @return true if the signature is valid
-     */
-    function _verifySignature(
-        bytes memory message_,
-        uint256 i_,
-        uint256[] memory c_,
-        uint256[] memory r_,
-        uint256[] memory publicKeysX_,
-        uint256[] memory publicKeysY_
-    ) internal pure returns (bool) {
-        return message_.verify(i_, c_, r_, publicKeysX_, publicKeysY_);
     }
 }

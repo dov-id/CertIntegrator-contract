@@ -48,6 +48,16 @@ library RingSignature {
         0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F;
     uint256 public constant BitSize = 256;
 
+    /**
+     * @notice Verifies Ring Signatiure
+     *
+     * @param message_ message that was signed
+     * @param i_ I signature key image
+     * @param c_ C scalar from the signature
+     * @param r_ R scalar from the signature
+     * @param publicKeysX_ X coordinates of public keys for users that took part in signing
+     * @param publicKeysY_ Y coordinates of public keys for users that took part in signing
+     */
     function verify(
         bytes memory message_,
         uint256 i_,

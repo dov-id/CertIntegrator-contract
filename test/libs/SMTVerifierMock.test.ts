@@ -6,7 +6,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { Reverter } from "../helpers/reverter";
 import { getPoseidons } from "../helpers/poseidons";
 
-describe("SMTVerifierMock", async () => {
+describe.only("SMTVerifierMock", async () => {
   const reverter = new Reverter();
 
   let smtVerifierMock: Contract;

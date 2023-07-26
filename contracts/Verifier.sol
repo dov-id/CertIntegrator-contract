@@ -53,7 +53,7 @@ contract Verifier is IVerifier {
         string memory tokenUri_
     ) external returns (uint256) {
         require(
-            _verifySignature(bytes(tokenUri_), i_, c_, r_, publicKeysX_, publicKeysY_) == true,
+            bytes(tokenUri_).verify(i_, c_, r_, publicKeysX_, publicKeysY_) == true,
             "Verifier: wrong signature"
         );
 
@@ -79,27 +79,5 @@ contract Verifier is IVerifier {
         require(success_, "Verifier: failed to mint token");
 
         return uint256(bytes32(data_));
-    }
-
-    /**
-     *  @dev Verifies Ring Signature.
-     *
-     *  @param message_ signature message
-     *  @param i_ Ring signature key image
-     *  @param c_ Ring signature scalar C
-     *  @param r_ Ring signature scalar R
-     *  @param publicKeysX_ x coordinates of public keys for signature verification
-     *  @param publicKeysY_ y coordinates of public keys for signature verification
-     *  @return true if the signature is valid
-     */
-    function _verifySignature(
-        bytes memory message_,
-        uint256 i_,
-        uint256[] memory c_,
-        uint256[] memory r_,
-        uint256[] memory publicKeysX_,
-        uint256[] memory publicKeysY_
-    ) internal pure returns (bool) {
-        return message_.verify(i_, c_, r_, publicKeysX_, publicKeysY_);
     }
 }

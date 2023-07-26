@@ -21,15 +21,6 @@ import {PoseidonUnit2L, PoseidonUnit3L} from "@iden3/contracts/lib/Poseidon.sol"
  *   Merkle Tree realization.
  */
 library SMTVerifier {
-    function verifyProof(
-        bytes32 root_,
-        bytes32 key_,
-        bytes32 value_,
-        bytes32[] memory proof_
-    ) internal pure returns (bool) {
-        return _verifyProof(root_, key_, value_, proof_);
-    }
-
     /**
      *  @notice Verifies root from proof.
      *
@@ -57,6 +48,15 @@ library SMTVerifier {
      *  Requirements:
      *   - the `proof_` array mustn't be empty.
      */
+    function verifyProof(
+        bytes32 root_,
+        bytes32 key_,
+        bytes32 value_,
+        bytes32[] memory proof_
+    ) internal pure returns (bool) {
+        return _verifyProof(root_, key_, value_, proof_);
+    }
+
     function _verifyProof(
         bytes32 root_,
         bytes32 key_,
@@ -78,7 +78,7 @@ library SMTVerifier {
         uint256 siblingKey_;
         uint256 lvl = proofLength_ - 1;
 
-        while (true) {
+        do {
             siblingKey_ = uint256(proof_[lvl]);
 
             if (_testBit(key_, lvl)) {
@@ -96,21 +96,11 @@ library SMTVerifier {
             }
 
             lvl--;
-        }
+        } while (true);
 
         return midKey_ == uint256(root_);
     }
 
-    /**
-     *  @notice Swaps bytes order (endianness).
-     *
-     *  @dev Function to swap bytes order, for better
-     *  understanding it just makes `result[len(data)-1-i] = data[i]`
-     *  for every byte in bytes array.
-     *
-     *  @param data_ bytes data to swap byte order
-     *  @return bytes with swapped `data_` bytes order
-     */
     function _swapEndianness(uint256 data_) private pure returns (uint256) {
         uint256 result_;
 
@@ -121,18 +111,6 @@ library SMTVerifier {
         return result_;
     }
 
-    /**
-     *  @notice Tests bit.
-     *
-     *  @dev This function tests bit value. It takes the byte
-     *  at the specified index, then shifts the bit to the right
-     *  position and perform bitwise AND, then checks if the bit
-     *  is set (not zero)
-     *
-     *  @param bitmap_ bytes array
-     *  @param n_ position of bit to test
-     *  @return true if bit in such position is set (1)
-     */
     function _testBit(bytes32 bitmap_, uint256 n_) private pure returns (bool) {
         uint256 byteIndex_ = n_ >> 3;
         uint256 bitIndex_ = n_ & 7;
@@ -144,25 +122,10 @@ library SMTVerifier {
         return result_ != 0;
     }
 
-    /**
-     *  @notice Makes Poseidon hash from 2 elements.
-     *
-     *  @param elem1_ the first element
-     *  @param elem2_ the second element
-     *  @return bytes32 Poseidon hash from elements
-     */
     function _newPoseidonHash2(uint256 elem1_, uint256 elem2_) private pure returns (uint256) {
         return PoseidonUnit2L.poseidon([elem1_, elem2_]);
     }
 
-    /**
-     *  @notice Makes Poseidon hash from 3 elements.
-     *
-     *  @param elem1_ the first element
-     *  @param elem2_ the second element
-     *  @param elem3_ the third element
-     *  @return bytes32 Poseidon hash from elements
-     */
     function _newPoseidonHash3(
         uint256 elem1_,
         uint256 elem2_,
