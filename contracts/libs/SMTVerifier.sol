@@ -4,49 +4,49 @@ pragma solidity 0.8.16;
 import {PoseidonUnit2L, PoseidonUnit3L} from "@iden3/contracts/lib/Poseidon.sol";
 
 /**
- *  1. This library is needed for verifying sparse Merkle Tree proof, that is generated with
- *   help of [Sparse Merkle Tree](https://github.com/iden3/go-merkletree-sql) in backend service,
- *   written in Golang (to generate proof just use `GenerateProof` method from the library).
+ * 1. This library is needed for verifying sparse Merkle Tree proof, that is generated with
+ *  help of [Sparse Merkle Tree](https://github.com/iden3/go-merkletree-sql) in backend service,
+ *  written in Golang (to generate proof just use `GenerateProof` method from the library).
  *
- *  2. This realization uses Poseidon hashing as a main hash function. The main repo for usage
- *   can be found in [circomlibjs](https://github.com/iden3/circomlibjs). Example of its usage and
- *   linking can be found in tests for this library.
+ * 2. This realization uses Poseidon hashing as a main hash function. The main repo for usage
+ *  can be found in [circomlibjs](https://github.com/iden3/circomlibjs). Example of its usage and
+ *  linking can be found in tests for this library.
  *
- *  3. Gas usage for main `verifyProof` method is:
- *      a. Min: 252226
- *      b. Avg: 252418
- *      c. Max: 252610
+ * 3. Gas usage for main `verifyProof` method is:
+ *     a. Min: 252226
+ *     b. Avg: 252418
+ *     c. Max: 252610
  *
- *  4. With this library there is no need to implement own realization for proof verifying in iden3 sparse
- *   Merkle Tree realization.
+ * 4. With this library there is no need to implement own realization for proof verifying in iden3 sparse
+ *  Merkle Tree realization.
  */
 library SMTVerifier {
     /**
-     *  @notice Verifies root from proof.
+     * @notice Verifies root from proof.
      *
-     *  1. Function takes some params and requires Merkle Tree proof
-     *   array not to be empty to have ability to retrieve root from it.
+     * 1. Function takes some params and requires Merkle Tree proof
+     *  array not to be empty to have ability to retrieve root from it.
      *
-     *  2. Then, it generates tree leaf from `key_`, `value_` and `1` (level in tree)
-     *   with help of Poseidon hashing for 3 elements (`poseidon3Hash_`).
+     * 2. Then, it generates tree leaf from `key_`, `value_` and `1` (level in tree)
+     *  with help of Poseidon hashing for 3 elements (`poseidon3Hash_`).
      *
-     *  3. On the next step it starts processing proof elements (starting from
-     *   the last element (`proof_.length - 1`)) until all are processed. At every
-     *   iteration it checks if the bit is set (not zero) to get some  kind of a path
-     *   from the root to the leaf.
+     * 3. On the next step it starts processing proof elements (starting from
+     *  the last element (`proof_.length - 1`)) until all are processed. At every
+     *  iteration it checks if the bit is set (not zero) to get some  kind of a path
+     *  from the root to the leaf.
      *
-     *  4. When all elements are processed, retrieved node compared with given root
-     *   to get response.
+     * 4. When all elements are processed, retrieved node compared with given root
+     *  to get response.
      *
-     *  @param root_ Merkle Tree root to verify
-     *  @param key_ the key to verify in SMT
-     *  @param value_ the value to verify in SMT
-     *  @param proof_ Sparse Merkle Tree proof
-     *  @return true when retrieved SMT root from proof is equal to the given `root_`,
-     *  otherwise - false
+     * @param root_ Merkle Tree root to verify
+     * @param key_ the key to verify in SMT
+     * @param value_ the value to verify in SMT
+     * @param proof_ Sparse Merkle Tree proof
+     * @return true when retrieved SMT root from proof is equal to the given `root_`,
+     * otherwise - false
      *
-     *  Requirements:
-     *   - the `proof_` array mustn't be empty.
+     * Requirements:
+     *  - the `proof_` array mustn't be empty.
      */
     function verifyProof(
         bytes32 root_,
@@ -114,6 +114,18 @@ library SMTVerifier {
         }
     }
 
+    /**
+     * @notice Tests bit.
+     *
+     * @dev This function tests bit value. It takes the byte
+     * at the specified index, then shifts the bit to the right
+     * position and perform bitwise AND, then checks if the bit
+     * is set (not zero)
+     *
+     * @param bitmap_ bytes array
+     * @param n_ position of bit to test
+     * @return true if bit in such position is set (1)
+     */
     function _testBit(bytes32 bitmap_, uint256 n_) private pure returns (bool) {
         uint256 byteIndex_ = n_ >> 3;
         uint256 bitIndex_ = n_ & 7;
