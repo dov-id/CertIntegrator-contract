@@ -76,9 +76,8 @@ library SMTVerifier {
         );
 
         uint256 siblingKey_;
-        uint256 lvl = proofLength_ - 1;
 
-        do {
+        for (uint256 lvl = proofLength_ - 1; ; lvl--) {
             siblingKey_ = uint256(proof_[lvl]);
 
             if (_testBit(key_, lvl)) {
@@ -94,21 +93,25 @@ library SMTVerifier {
             if (lvl == 0) {
                 break;
             }
-
-            lvl--;
-        } while (true);
+        }
 
         return midKey_ == uint256(root_);
     }
 
-    function _swapEndianness(uint256 data_) private pure returns (uint256) {
-        uint256 result_;
-
+    /**
+     * @dev Swaps bytes order (endianness).
+     *
+     * @notice Function to swap bytes order, for better
+     * understanding it just makes `result[len(data)-1-i] = data[i]`
+     * for every byte in bytes array.
+     *
+     * @param data_ bytes data to swap byte order
+     * @return result_ uint256 with swapped `data_` bytes order
+     */
+    function _swapEndianness(uint256 data_) private pure returns (uint256 result_) {
         for (uint i = 0; i < 32; i++) {
-            result_ |= (255 & (uint256(data_) >> (i * 8))) << ((31 - i) * 8);
+            result_ |= (255 & (data_ >> (i * 8))) << ((31 - i) * 8);
         }
-
-        return result_;
     }
 
     function _testBit(bytes32 bitmap_, uint256 n_) private pure returns (bool) {
@@ -117,9 +120,8 @@ library SMTVerifier {
 
         uint8 byteValue_ = uint8(bitmap_[byteIndex_]);
         uint8 mask_ = uint8(1 << bitIndex_);
-        uint8 result_ = byteValue_ & mask_;
 
-        return result_ != 0;
+        return (byteValue_ & mask_) != 0;
     }
 
     function _newPoseidonHash2(uint256 elem1_, uint256 elem2_) private pure returns (uint256) {

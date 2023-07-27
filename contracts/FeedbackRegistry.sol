@@ -99,8 +99,6 @@ contract FeedbackRegistry is IFeedbackRegistry {
         for (uint256 i = offset_; i < to_; i++) {
             list_[i - offset_] = contractFeedbacks[course_][i];
         }
-
-        return list_;
     }
 
     /**
