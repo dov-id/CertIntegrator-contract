@@ -49,7 +49,7 @@ library RingSignature {
     uint256 public constant BitSize = 256;
 
     /**
-     * @notice Verifies Ring Signatiure
+     * @notice Verifies Ring Signature
      *
      * @param message_ message that was signed
      * @param i_ I signature key image

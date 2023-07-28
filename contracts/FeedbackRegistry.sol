@@ -33,10 +33,10 @@ import {RingSignature} from "./libs/RingSignature.sol";
  *    to storage.
  */
 contract FeedbackRegistry is IFeedbackRegistry {
-    using EnumerableSet for EnumerableSet.AddressSet;
     using RingSignature for bytes;
     using SMTVerifier for bytes32;
     using Paginator for EnumerableSet.AddressSet;
+    using EnumerableSet for EnumerableSet.AddressSet;
 
     // course address => feedbacks (ipfs)
     mapping(address => string[]) public contractFeedbacks;

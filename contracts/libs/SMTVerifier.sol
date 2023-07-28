@@ -76,11 +76,14 @@ library SMTVerifier {
         );
 
         uint256 siblingKey_;
+        uint256 i = proofLength_;
 
-        for (uint256 lvl = proofLength_ - 1; ; lvl--) {
-            siblingKey_ = uint256(proof_[lvl]);
+        do {
+            i--;
 
-            if (_testBit(key_, lvl)) {
+            siblingKey_ = uint256(proof_[i]);
+
+            if (_testBit(key_, i)) {
                 midKey_ = _swapEndianness(
                     _newPoseidonHash2(_swapEndianness(siblingKey_), _swapEndianness(midKey_))
                 );
@@ -89,11 +92,7 @@ library SMTVerifier {
                     _newPoseidonHash2(_swapEndianness(midKey_), _swapEndianness(siblingKey_))
                 );
             }
-
-            if (lvl == 0) {
-                break;
-            }
-        }
+        } while (i != 0);
 
         return midKey_ == uint256(root_);
     }
