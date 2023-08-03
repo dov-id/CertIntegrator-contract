@@ -46,29 +46,23 @@ interface IFeedbackRegistry {
      * @param course_ the course address
      * @param offset_ the amount of feedbacks to offset
      * @param limit_ the maximum number of feedbacks amount to return
+     * @return list_ with feedbacks for required course in specified range
      */
     function getFeedbacks(
         address course_,
         uint256 offset_,
         uint256 limit_
-    ) external view returns (string[] memory);
+    ) external view returns (string[] memory list_);
 
     /**
-     * @notice This function returns ALL feedbacks that are stored in storage
-     * for ALL courses.
-     *
-     * @dev Function that mostly oriented to publisher-svc. It's required to get all
-     * feedbacks in order to have the most up to date information about feedbacks in
-     * our backend service. All feedbacks returned in paginated way.
+     * @notice This function returns paginated courses for which feedbacks were stored.
      *
      * @param offset_ the amount of courses to offset
-     * @param limit_ the maximum courses amount to return their feedbacks
-     * @return courses_ and feedbacks_  where `courses_` is array with course identifiers and
-     * `feedbacks_` is 2d array with feedbacks (their ipfs hashes) for corresponding course
-     * from `courses_
+     * @param limit_ the maximum courses amount to return
+     * @return courses_ array with course addresses in specified range
      */
-    function getAllFeedbacks(
+    function getCourses(
         uint256 offset_,
         uint256 limit_
-    ) external view returns (address[] memory courses_, string[][] memory feedbacks_);
+    ) external view returns (address[] memory courses_);
 }

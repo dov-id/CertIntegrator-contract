@@ -104,18 +104,10 @@ contract FeedbackRegistry is IFeedbackRegistry {
     /**
      * @inheritdoc IFeedbackRegistry
      */
-    function getAllFeedbacks(
+    function getCourses(
         uint256 offset_,
         uint256 limit_
-    ) external view returns (address[] memory courses_, string[][] memory feedbacks_) {
+    ) external view returns (address[] memory courses_) {
         courses_ = _courses.part(offset_, limit_);
-
-        uint256 coursesLength_ = courses_.length;
-
-        feedbacks_ = new string[][](coursesLength_);
-
-        for (uint256 i = 0; i < coursesLength_; i++) {
-            feedbacks_[i] = contractFeedbacks[courses_[i]];
-        }
     }
 }

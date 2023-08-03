@@ -1,7 +1,6 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { Contract } from "ethers";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { SMTVerifierMock } from "@/generated-types/ethers";
 
 import { Reverter } from "../helpers/reverter";
 import { getPoseidons } from "../helpers/poseidons";
@@ -9,9 +8,7 @@ import { getPoseidons } from "../helpers/poseidons";
 describe("SMTVerifierMock", async () => {
   const reverter = new Reverter();
 
-  let smtVerifierMock: Contract;
-
-  let USER1: SignerWithAddress;
+  let smtVerifierMock: SMTVerifierMock;
 
   let ROOT: string;
   let KEY: string;
@@ -19,8 +16,6 @@ describe("SMTVerifierMock", async () => {
   let PROOF: string[];
 
   before(async () => {
-    [USER1] = await ethers.getSigners();
-
     ROOT = "0x98d13a98860abb4a27d2b45e34e131007ab8c292911af602fcdc946491400605";
     KEY = "0x4e04f9e04f79fa38ce851d00a796711ba49d7452000000000000000000000000";
     VAL = "0x0300000000000000000000000000000000000000000000000000000000000000";

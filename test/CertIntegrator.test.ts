@@ -1,16 +1,15 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { Contract } from "ethers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { CertIntegrator } from "@/generated-types/ethers";
 
 import { Reverter } from "./helpers/reverter";
 
 describe("CertIntegrator", () => {
   const reverter = new Reverter();
 
-  let certIntegrator: Contract;
+  let certIntegrator: CertIntegrator;
 
-  let OWNER: SignerWithAddress;
   let USER: SignerWithAddress;
 
   let COURSE: string;
@@ -19,7 +18,7 @@ describe("CertIntegrator", () => {
   let VALUE3: string;
 
   before(async () => {
-    [OWNER, USER] = await ethers.getSigners();
+    USER = (await ethers.getSigners())[1];
 
     COURSE = "0x63223538169D7228b37C9182eD6d2b9B2CfD8F26";
     VALUE1 = "0x0000000000000000000000000000000000000000000000000000000000000001";
