@@ -1,36 +1,34 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity 0.8.16;
 
-import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-
-import "./interfaces/IVerifier.sol";
-import "./libs/SMTVerifier.sol";
+import {IVerifier} from "./interfaces/IVerifier.sol";
+import {SMTVerifier} from "./libs/SMTVerifier.sol";
+import {RingSignature} from "./libs/RingSignature.sol";
 
 /**
- *  @notice The Verifier contract
+ * @notice The Verifier contract
  *
- *  1. When we have some token in main chain, but at the same time interact with another chains,
- *  sometimes there is a need to operate data directly from one of these chains.
+ * 1. When we have some token in main chain, but at the same time interact with another chains,
+ *    sometimes there is a need to operate data directly from one of these chains.
  *
- *  2. This contract solves such problem, by verifying that user definitely owns such token in
- *  main chain and minting token with the same uri.
+ * 2. This contract solves such problem, by verifying that user definitely owns such token in
+ *    main chain and minting token with the same uri.
  *
- *  3. Verification takes part according to such flow:
- *      a. Our contract verifies signature
- *      b. It makes call to integrator contract in order to get last root with block that was
- *         published there. Then using sparse merkle tree proof, key and value verifies proof
- *         with help of SMTVerifier lib
- *      c. If everything was processed without errors verifier contract will make a call to
- *         the contract address to mint new token in side-chain.
+ * 3. Verification takes part according to such flow:
+ *    a. Our contract verifies signature
+ *    b. It makes call to integrator contract in order to get last root with block that was
+ *       published there. Then using sparse Merkle Tree proof, key and value verifies proof
+ *       with help of SMTVerifier lib
+ *    c. If everything was processed without errors verifier contract will make a call to
+ *       the contract address to mint new token in side-chain.
  *
- *  4. Note:
- *      a. As signature now we process ECDSA signature from function caller
- *      b. In ECDSA signature temporary must be signed `key_` parameter
- *      c. As merkle tree proof contract waits Sparse Merkle Tree Proof. During testing was used
- *         proofs from such [realization](https://github.com/iden3/go-merkletree-sql)
+ * 4. Note:
+ *    a. As signature now we process ring signature
+ *    b. As Merkle Tree proof contract waits Sparse Merkle Tree Proof. During testing was used
+ *       proofs from such [realization](https://github.com/iden3/go-merkletree-sql)
  */
 contract Verifier is IVerifier {
-    using ECDSA for bytes32;
+    using RingSignature for bytes;
     using SMTVerifier for bytes32;
 
     address internal _integrator;
@@ -44,26 +42,35 @@ contract Verifier is IVerifier {
      */
     function verifyContract(
         address contract_,
-        bytes memory signature_,
-        bytes32[] memory merkleTreeProof_,
-        bytes32 key_,
-        bytes32 value_,
+        uint256 i_,
+        uint256[] memory c_,
+        uint256[] memory r_,
+        uint256[] memory publicKeysX_,
+        uint256[] memory publicKeysY_,
+        bytes32[][] memory merkleTreeProofs_,
+        bytes32[] memory keys_,
+        bytes32[] memory values_,
         string memory tokenUri_
     ) external returns (uint256) {
-        require(_verifySignature(key_, signature_) == true, "Verifier: wrong signature");
+        require(
+            bytes(tokenUri_).verify(i_, c_, r_, publicKeysX_, publicKeysY_) == true,
+            "Verifier: wrong signature"
+        );
 
         (bool success_, bytes memory data_) = _integrator.call(
-            abi.encodeWithSignature("getLastData(bytes)", abi.encodePacked(contract_))
+            abi.encodeWithSignature("getLastData(address)", contract_)
         );
 
         require(success_, "Verifier: failed to get last data");
 
         Data memory courseData_ = abi.decode(data_, (Data));
 
-        require(
-            courseData_.root.verifyProof(key_, value_, merkleTreeProof_) == true,
-            "Verifier: wrong merkle tree verification"
-        );
+        for (uint k = 0; k < merkleTreeProofs_.length; k++) {
+            require(
+                courseData_.root.verifyProof(keys_[k], values_[k], merkleTreeProofs_[k]) == true,
+                "Verifier: wrong Merkle Tree verification"
+            );
+        }
 
         (success_, data_) = contract_.call(
             abi.encodeWithSignature("mintToken(address,string)", msg.sender, tokenUri_)
@@ -72,19 +79,5 @@ contract Verifier is IVerifier {
         require(success_, "Verifier: failed to mint token");
 
         return uint256(bytes32(data_));
-    }
-
-    /**
-     *  @dev Verifies ECDSA signature.
-     *
-     *  @param data_ signature message
-     *  @param signature_ the ecdsa signature itself
-     *  @return true if the signature has corresponding data and signed by sender
-     */
-    function _verifySignature(
-        bytes32 data_,
-        bytes memory signature_
-    ) internal view returns (bool) {
-        return data_.toEthSignedMessageHash().recover(signature_) == msg.sender;
     }
 }

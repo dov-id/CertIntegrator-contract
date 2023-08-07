@@ -1,16 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity 0.8.16;
 
-import "@dlsl/dev-modules/contracts-registry/pools/proxy/ProxyBeacon.sol";
-import "@dlsl/dev-modules/contracts-registry/pools/pool-factory/proxy/PublicBeaconProxy.sol";
+import {ProxyBeacon} from "@dlsl/dev-modules/contracts-registry/pools/proxy/ProxyBeacon.sol";
+import {PublicBeaconProxy} from "@dlsl/dev-modules/contracts-registry/pools/pool-factory/proxy/PublicBeaconProxy.sol";
+import {Paginator} from "@dlsl/dev-modules/libs/arrays/Paginator.sol";
+import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-
-import "@dlsl/dev-modules/libs/arrays/Paginator.sol";
-
-import "../interfaces/ITokenFactory.sol";
-import "../interfaces/ITokenContract.sol";
+import {ITokenFactory} from "../interfaces/ITokenFactory.sol";
+import {ITokenContract} from "../interfaces/ITokenContract.sol";
 
 contract TokenFactory is ITokenFactory, OwnableUpgradeable {
     using EnumerableSet for EnumerableSet.AddressSet;
