@@ -7,6 +7,7 @@ import { getPoseidons } from "@/test/helpers/poseidons";
 const Verifier = artifacts.require("Verifier");
 const CertIntegrator = artifacts.require("CertIntegrator");
 const FeedbackRegistry = artifacts.require("FeedbackRegistry");
+const Groth16Verifier = artifacts.require("Groth16Verifier");
 
 const PoseidonUnit2L = artifacts.require("PoseidonUnit2L");
 const PoseidonUnit3L = artifacts.require("PoseidonUnit3L");
@@ -19,10 +20,9 @@ export = async (deployer: Deployer, logger: Logger) => {
   const poseidonUnit2L = await PoseidonUnit2L.at(poseidonHasher2.address);
   const poseidonUnit3L = await PoseidonUnit3L.at(poseidonHasher3.address);
 
-  await deployer.link(poseidonUnit2L, FeedbackRegistry);
-  await deployer.link(poseidonUnit3L, FeedbackRegistry);
+  const groth16Verifier = await deployer.deploy(Groth16Verifier);
 
-  const feedbackRegistry = await deployer.deploy(FeedbackRegistry, certIntegrator.address);
+  const feedbackRegistry = await deployer.deploy(FeedbackRegistry, groth16Verifier.address);
 
   await deployer.link(poseidonUnit2L, Verifier);
   await deployer.link(poseidonUnit3L, Verifier);
@@ -32,6 +32,7 @@ export = async (deployer: Deployer, logger: Logger) => {
   logger.logContracts(
     ["CertIntegrator", certIntegrator.address],
     ["FeedbackRegistry", feedbackRegistry.address],
+    ["Groth16Verifier", groth16Verifier.address],
     ["Verifier", verifier.address]
   );
 };

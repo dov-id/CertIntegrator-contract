@@ -5,9 +5,6 @@ import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet
 import {Paginator} from "@dlsl/dev-modules/libs/arrays/Paginator.sol";
 
 import {IFeedbackRegistry} from "./interfaces/IFeedbackRegistry.sol";
-import {ICertIntegrator} from "./interfaces/ICertIntegrator.sol";
-import {SMTVerifier} from "./libs/SMTVerifier.sol";
-import {RingSignature} from "./libs/RingSignature.sol";
 
 /**
  * @notice The Feedback registry contract
@@ -20,33 +17,23 @@ import {RingSignature} from "./libs/RingSignature.sol";
  * 2. The course identifier - is its address as every course is represented by NFT contract.
  *
  * 3. Requirements:
- *    - The contract must receive information about the courses and their participants from the
- *      CertIntegrator contract.
  *    - The ability to add feedback by a user for a specific course with a provided ZKP of NFT owning.
  *      The proof must be validated.
  *    - The ability to retrieve feedbacks with a pagination.
- *
- * 4. Note:
- *    Dev team faced with a zkSnark proof generation problems, so now contract checks that the
- *    addressesMTP root is stored in the CertIntegrator contract and that all MTPs are correct.
- *    The contract checks the ring signature as well, and if it is correct the contract adds feedback
- *    to storage.
  */
 contract FeedbackRegistry is IFeedbackRegistry {
-    using RingSignature for bytes;
-    using SMTVerifier for bytes32;
     using Paginator for EnumerableSet.AddressSet;
     using EnumerableSet for EnumerableSet.AddressSet;
 
     // course address => feedbacks (ipfs)
     mapping(address => string[]) public contractFeedbacks;
 
-    address private _certIntegrator;
+    address private _verifier;
 
     EnumerableSet.AddressSet private _courses;
 
-    constructor(address certIntegrator_) {
-        _certIntegrator = certIntegrator_;
+    constructor(address verifier_) {
+        _verifier = verifier_;
     }
 
     /**
@@ -54,31 +41,25 @@ contract FeedbackRegistry is IFeedbackRegistry {
      */
     function addFeedback(
         address course_,
-        uint256 i_,
-        uint256[] memory c_,
-        uint256[] memory r_,
-        uint256[] memory publicKeysX_,
-        uint256[] memory publicKeysY_,
-        bytes32[][] memory merkleTreeProofs_,
-        bytes32[] memory keys_,
-        bytes32[] memory values_,
-        string memory ipfsHash_
+        string memory ipfsHash_,
+        uint256[2] calldata pA_,
+        uint256[2][2] calldata pB_,
+        uint256[2] calldata pC_,
+        uint256[11] calldata pubSignals_
     ) external {
-        require(
-            bytes(ipfsHash_).verify(i_, c_, r_, publicKeysX_, publicKeysY_) == true,
-            "FeedbackRegistry: wrong signature"
+        (bool success_, bytes memory data_) = _verifier.call(
+            abi.encodeWithSignature(
+                "verifyProof(uint256[2],uint256[2][2],uint256[2],uint256[11])",
+                pA_,
+                pB_,
+                pC_,
+                pubSignals_
+            )
         );
 
-        ICertIntegrator.Data memory courseData_ = ICertIntegrator(_certIntegrator).getLastData(
-            course_
-        );
+        require(success_, "FeedbackRegistry: failed to call verifyProof");
 
-        for (uint k = 0; k < merkleTreeProofs_.length; k++) {
-            require(
-                courseData_.root.verifyProof(keys_[k], values_[k], merkleTreeProofs_[k]) == true,
-                "FeedbackRegistry: wrong Merkle Tree verification"
-            );
-        }
+        require(abi.decode(data_, (bool)), "FeedbackRegistry: invalid proof");
 
         _courses.add(course_);
         contractFeedbacks[course_].push(ipfsHash_);
