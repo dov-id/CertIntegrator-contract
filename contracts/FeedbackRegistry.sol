@@ -17,17 +17,9 @@ import {IFeedbackRegistry} from "./interfaces/IFeedbackRegistry.sol";
  * 2. The course identifier - is its address as every course is represented by NFT contract.
  *
  * 3. Requirements:
- *    - The contract must receive information about the courses and their participants from the
- *      CertIntegrator contract.
  *    - The ability to add feedback by a user for a specific course with a provided ZKP of NFT owning.
  *      The proof must be validated.
  *    - The ability to retrieve feedbacks with a pagination.
- *
- * 4. Note:
- *    Dev team faced with a zkSnark proof generation problems, so now contract checks that the
- *    addressesMTP root is stored in the CertIntegrator contract and that all MTPs are correct.
- *    The contract checks the ring signature as well, and if it is correct the contract adds feedback
- *    to storage.
  */
 contract FeedbackRegistry is IFeedbackRegistry {
     using Paginator for EnumerableSet.AddressSet;
